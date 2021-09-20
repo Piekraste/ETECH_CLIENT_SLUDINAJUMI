@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, ButtonGroup } from '@mui/material';
+import { Button, ButtonGroup } from "@mui/material";
 import { useSelector } from "react-redux";
 
 import "./styles.css";
@@ -7,20 +7,20 @@ import "./styles.css";
 const Filter = ({ setFilter }) => {
   const data = useSelector((state) => state.posts);
   const onFilterSelection = (event) => {
-    // const CONDITION_ONE = "darbs"; 
-    const filter = event.target.offsetParent.id; // "darbs"
-
-    if (filter === "darbs" ||filter === "andele" || filter === "atdod" || filter === "pasakumi" || filter === "pasākumi") {
+    const filter = event.target.id;
+    console.log(event.target);
+    if (
+      filter === "darbs" ||
+      filter === "andele" ||
+      filter === "atdod" ||
+      filter === "pasakumi" ||
+      filter === "pasākumi"
+    ) {
       const filteredResults = data.filter((post) =>
         post.tags.some((tag) => tag.includes(filter))
-
-        // post.tags.some((tag) => tag === filter)
       );
-      console.log(filteredResults);
       setFilter(filteredResults);
-      console.log("Setup done");
     } else {
-      console.log(data);
       setFilter(data);
     }
   };
@@ -28,7 +28,7 @@ const Filter = ({ setFilter }) => {
   return (
     <ButtonGroup
       variant="contained"
-     aria-label="contained primary button group"
+      aria-label="contained primary button group"
       className={"filter__margin"}
     >
       <Button id={null} onClick={onFilterSelection}>
