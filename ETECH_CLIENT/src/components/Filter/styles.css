@@ -1,3 +1,11 @@
 .filter__margin {
-    margin: 40px;
-  }
+  box-shadow: none !important;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 10px 0;
+}
+
+.btn--hashtag {
+  border-radius: 5px !important;
+}

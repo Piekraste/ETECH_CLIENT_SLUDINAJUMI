@@ -3,10 +3,18 @@ import { TextField, Button, Typography, Paper } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import FileBase from "react-file-base64";
 
+import CloseIcon from "@mui/icons-material/Close";
+// import Snackbar from "@mui/material/Snackbar";
+// import MuiAlert from "@mui/material/Alert";
+
 import useStyles from "./styles";
 import { createPost, updatePost } from "../../actions/posts";
 
-const Form = ({ currentId, setCurrentId }) => {
+// const Alert = React.forwardRef(function Alert(props, ref) {
+//   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+// });
+
+export default function Form({ currentId, setCurrentId, handleClose }) {
   const [postData, setPostData] = useState({
     creator: "",
     title: "",
@@ -14,9 +22,12 @@ const Form = ({ currentId, setCurrentId }) => {
     tags: "",
     selectedFile: "",
   });
-  const post = useSelector((state) =>
-    currentId ? state.posts.find((message) => message._id === currentId) : null
-  );
+
+  const post = useSelector((state) => {
+    return currentId
+      ? state.posts.find((message) => message._id === currentId)
+      : null;
+  });
   const dispatch = useDispatch();
   const classes = useStyles();
 
@@ -41,14 +52,18 @@ const Form = ({ currentId, setCurrentId }) => {
     if (currentId === 0) {
       dispatch(createPost(postData));
       clear();
+      handleClose();
     } else {
       dispatch(updatePost(currentId, postData));
       clear();
+      handleClose();
     }
   };
 
   return (
     <Paper className={classes.paper}>
+      <CloseIcon className={classes.closeIconStyles} onClick={handleClose} />
+
       <form
         autoComplete="off"
         noValidate
@@ -56,7 +71,7 @@ const Form = ({ currentId, setCurrentId }) => {
         onSubmit={handleSubmit}
       >
         <Typography variant="h6">
-          {currentId ? `Editing "${post.title}"` : "Jauns ziņojums"}
+          {currentId ? `Salabo "${post.title}"` : "Jauns ziņojums"}
         </Typography>
         <TextField
           name="creator"
@@ -132,6 +147,4 @@ const Form = ({ currentId, setCurrentId }) => {
       </form>
     </Paper>
   );
-};
-
-export default Form;
+}
