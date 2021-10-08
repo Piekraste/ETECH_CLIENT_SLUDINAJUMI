@@ -1,61 +1,76 @@
 import React from "react";
-import { ThemeProvider } from "@material-ui/core/";
-import { styled } from "@mui/material/styles";
+import { useSelector, useDispatch } from "react-redux";
+// import { open } from "../../../features/handleOpen/handleOpenSlice";
+
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
-import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-// import FavoriteIcon from "@mui/icons-material/Favorite";
-
-import moment from "moment";
-
-import localization from "moment/locale/lv";
-
-import { useDispatch } from "react-redux";
-
-import { likePost } from "../../../actions/posts";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import Button from "@mui/material/Button";
 import useStyles from "./styles";
 
-const Post = ({ post, setCurrentId }) => {
+import moment from "moment";
+import localization from "moment/locale/lv";
+
+import { likePost, deletePost } from "../../../actions/posts";
+
+export default function Post({ post, setCurrentId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
 
-  const ExpandMore = styled((props) => {
-    const { expand, ...other } = props;
-    return <IconButton {...other} />;
-  })(({ theme, expand }) => ({
-    transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
-    marginLeft: "auto",
-    transition: theme.transitions.create("transform", {
-      duration: theme.transitions.duration.shortest,
-    }),
-  }));
-
-  const [expanded, setExpanded] = React.useState(false);
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
+  const handleTags = (post) => {
+    if (post.tags) {
+      const tag = post.tags.map((tag) => `#${tag} `);
+      return tag;
+    } else {
+      return " ";
+    }
   };
+
+  // Needs connection to redux / store to use the handleOpen/handleClose functionality of the form field
+  // const open = useSelector((state) => state.handleOpen.value);
+  const handleEdit = () => {
+    // dispatch(open());
+    return setCurrentId(post._id);
+  };
+
   moment.updateLocale("lv", localization);
+
   return (
     <Card className={classes.card}>
       <CardHeader
         title={post.creator}
         subheader={moment(post.createdAt).fromNow()}
-        action={
-          <IconButton
-            aria-label="patīk"
-            onClick={() => dispatch(likePost(post._id))}
-          >
+      />
+      <CardActions sx={{ display: "flex", justifyContent: "center" }}>
+        <Button
+          className={classes.likeCount}
+          onClick={() => dispatch(likePost(post._id))}
+        >
+          <ThumbUpIcon color="primary" fontSize="medium" />
+          <IconButton color="primary" aria-label="patīk">
             {post.likeCount}
-            {/* <FavoriteIcon fontSize="small" /> */}
           </IconButton>
-        }
-      ></CardHeader>
+        </Button>
+
+        <Button
+          size="small"
+          color="primary"
+          onClick={() => dispatch(deletePost(post._id))}
+        >
+          <DeleteIcon fontSize="small" /> Dzēst
+        </Button>
+        <Button size="small" color="primary" onClick={handleEdit}>
+          <EditIcon fontSize="small" /> Labot
+        </Button>
+      </CardActions>
+
       <CardMedia
         className={classes.media}
         image={
@@ -74,30 +89,15 @@ const Post = ({ post, setCurrentId }) => {
 
       <CardActions className={classes.cardActions}>
         <Typography variant="body2" color="textSecondary" component="h2">
-          # {post.tags.map((tag) => `${tag} `)}{" "}
+          {handleTags(post)}{" "}
         </Typography>
       </CardActions>
-      {/* <ExpandMore
-        expand={expanded}
-        onClick={handleExpandClick}
-        aria-expanded={expanded}
-        aria-label="show more"
-      >
-        <ExpandMoreIcon />
-      </ExpandMore> */}
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography variant="body2" color="textSecondary">
-            Tālrunis - {post.title}
-          </Typography>
-        </CardContent>
-      </Collapse>
+
+      <CardContent>
+        <Typography variant="body2" color="textSecondary">
+          Tālrunis - {post.title}
+        </Typography>
+      </CardContent>
     </Card>
   );
-};
-
-export default Post;
-
-// <div className={classes.overlay2}>
-//<Button style={{ color: 'black' }} size="small" onClick={() => setCurrentId(post._id)}>Labot</Button>
-//</div>
+}
